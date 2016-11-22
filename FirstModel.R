@@ -1,5 +1,7 @@
+
+
 library(readxl)
-path <- "C:\\Users\\ankit.talele\\Desktop\\Elvasier\\New Data"
+path <- "C:\\Users\\ankit.talele\\Desktop\\New Data"
 setwd(path)
 Data <- read_excel("Export_Final_File.xls")
 str(Data)

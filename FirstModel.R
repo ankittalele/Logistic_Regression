@@ -1,7 +1,5 @@
-
-
 library(readxl)
-path <- "C:\\Users\\ankit.talele\\Desktop\\New Data"
+path <- "C:\\Users\\ankit.talele\\Desktop\\Elvasier\\New Data"
 setwd(path)
 Data <- read_excel("Export_Final_File.xls")
 str(Data)
@@ -13,19 +11,15 @@ unique(Data[14])
 
 #Converting Charater to Factor variables
 
-Data[,-c(2,3,4,6,8,9,10,12,13,14,18,19)]=lapply(Data[,-c(2,3,4,6,8,9,10,12,13,14,18,19)],FUN = function(x) as.factor(x))
-str(Data)
+Data[,-c(3,6,10,12,13,18,19)]=lapply(Data[,-c(3,6,10,12,13,18,19)],FUN = function(x) as.factor(x))
+colnames(Data)
 
 sapply(Data, function(x) sum(is.na(x)))
 
-unique(Data$Target_Var)
-colnames(DataVariable)
+table(Data$Target_Var)
+DataVariable <- Data[,-c(3,6,8,10,13,19)]
+str(DataVariable)
 sapply(DataVariable, function(x) sum(is.na(x)))
-
-
-DataVariable <- Data[,-c(2,3,6,8,10,13,19)]
-colnames(DataVariable)
-
 
 #####Removing all Na
 
@@ -54,6 +48,52 @@ set.seed(123)
 train_ind <- sample(seq_len(nrow(DataVariable)), size = smp_size)
 train <- DataVariable[train_ind, ]
 test <- DataVariable[-train_ind, ]
+
+
+#################################################Startfied Sampling
+set.seed(123)
+split=0.95
+library("caret")
+trainIndex <- createDataPartition(DataVariable$Target_Var, p=split, list=FALSE)
+data_train <- DataVariable[ trainIndex,]
+data_test <- DataVariable[-trainIndex,]
+
+which(data_test$`Oppty Offering` == 'E-Select')
+#data_test = data_test[-6211,]
+
+
+
+sapply(data_train, function(x) length(levels(x)))
+sapply(data_test, function(x) length(levels(x)))
+colnames(data_test)
+
+
+model <- glm(Target_Var ~.,family=binomial(link='logit'),data=data_train)
+predict <- predict(model, type = 'response')
+
+#################################################
+
+which(data_test$`Acc Country` == 'Réunion')
+#data_test = data_test[-c(325),]
+which(data_test$`Oppty Sales Rep Mgr` == 'Mizuno, Atsuko')
+#data_test = data_test[-c(433),]
+
+which(data_test$`Oppty Product Type` == 'MDC Global (HS)')
+#data_test = data_test[-c(298),]
+#table(data_test$Target_Var)
+#table(data_train$Target_Var)
+
+#################################################
+fitted.results <- predict(model,newdata=subset(data_test,select=c(1:13)),type='response')
+fitted.results <- ifelse(fitted.results > 0.5,1,0)
+data
+write.csv(fitted.results,"Fdata_test.csv")
+table(data_train$Target_Var)
+table(data_test$Target_Var)
+levels(data_train$`Acc Secondary Sector`)
+
+####################################################################
+
 str(train)
 #logistic regression model
 ##model <- glm (Target_Var ~ ., data = train, family = binomial)

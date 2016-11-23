@@ -26,4 +26,31 @@ df_all_combined <- cbind(Data[,-c(which(colnames(Data) %in% ohe_fests))],df_all_
 sink('ot.txt')
 str(df_all_combined)
 sink()
-###################################################################3
+########################### 70:30 on data for train and test
+
+split=0.70
+trainIndex <- createDataPartition(df_all_combined$New_Target_Var, p=split, list=FALSE)
+data_train <- df_all_combined[ trainIndex,]
+data_test <- df_all_combined[-trainIndex,]
+
+
+model <- glm(New_Target_Var ~.,family=binomial(link='logit'),data=data_train)
+predict <- plogis(predict(model, type = 'response'))
+
+fitted.results <- predict(model,newdata=data_test,type='response')
+library(InformationValue)
+optCutOff <- optimalCutoff(data_test$New_Target_Var, predict)[1] 
+
+fitted.results <- ifelse(fitted.results > 0.5,1,0)
+write.csv(fitted.results,"Fdata_test_fu.csv")
+write.csv(data_test,"data_test.csv")
+
+sink("Summary_model.txt")
+summary(model)
+sink()
+vif(model)
+alias(model)
+as <- cor(data_test)
+head(data_test)
+test1<-apply(data_test,2,as.numeric)
+cortest=cor(test1)

@@ -33,7 +33,7 @@ trainIndex <- createDataPartition(df_all_combined$New_Target_Var, p=split, list=
 data_train <- df_all_combined[ trainIndex,]
 data_test <- df_all_combined[-trainIndex,]
 
-
+################################################################################################
 model <- glm(New_Target_Var ~.,family=binomial(link='logit'),data=data_train)
 predict <- plogis(predict(model, type = 'response'))
 
@@ -54,3 +54,16 @@ as <- cor(data_test)
 head(data_test)
 test1<-apply(data_test,2,as.numeric)
 cortest=cor(test1)
+###########################################################################################################
+###########
+#install.packages("pROC")
+library(pROC)
+g <- roc(New_Target_Var ~ predict, data = data_train)
+plot(g)
+auc(g, min = 0, max = 1)
+
+
+Auc <- auc(predict$, predictions$pred)
+plot_pred_type_distribution(predict, 0.7)
+
+

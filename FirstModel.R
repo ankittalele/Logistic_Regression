@@ -12,7 +12,7 @@ unique(Data[14])
 Data$New_Target_Var <- 0
 Data$New_Target_Var[Data$Target_Var == "3"]<-0
 Data$New_Target_Var[Data$Target_Var == "1"]<-1
-Data$New_Target_Var[Data$Target_Var == "2"]<-2
+Data$New_Target_Var[Data$Target_Var == "2"]<-0
 
 
 

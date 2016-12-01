@@ -11,7 +11,12 @@ Data <- read.csv("DataVariable.csv")
 names(Data)
 Data$Decision.Maker <- as.factor(Data$Decision.Maker)
 Data$New_Target_Var <- as.factor(Data$New_Target_Var)
+dim(Data)
+length(which(Data$New_Target_Var == 0))
 
+13725/4
+877/4
+3432-220
 
 ######################## OHE ###############
 ohe_fests <- c('Sales.Division','Acc.Country','Acc.Secondary.Sector','Acc.Type','Oppty.Offering','Oppty.Sales.Rep.Mgr', 
@@ -63,7 +68,18 @@ plot(g)
 auc(g, min = 0, max = 1)
 
 
-Auc <- auc(predict$, predictions$pred)
-plot_pred_type_distribution(predict, 0.7)
+
+confusionMatrix(data_test$New_Target_Var,fitted.results)
+dim(data_test)
 
 
+library(caret)
+library (ROCR)
+y <- as.factor(data_test$New_Target_Var)
+predictions <- as.factor(fitted.results)
+
+
+precision <- posPredValue(predictions, y)
+recall <- sensitivity(predictions, y)
+
+F1 <- (2 * precision * recall) / (precision + recall)
